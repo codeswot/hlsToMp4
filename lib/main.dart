@@ -49,7 +49,9 @@ class MyApp extends StatelessWidget {
     createFileIfNotExists(outputPlayFilePath);
     File file = File(outputPlayFilePath);
     await file.writeAsBytes(response.bodyBytes);
-
+    if (kDebugMode) {
+      print('playlist path  $outputPlayFilePath');
+    }
     if (response.statusCode == 200) {
       List<String> lines = LineSplitter.split(response.body).toList();
 
