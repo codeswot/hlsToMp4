@@ -16,10 +16,13 @@ Future<void> cacheHLSStream(String url) async {
 
   final res = await downloadM3U8File(url: varientUrl);
   print('Path $res');
+  List<String> segmentPath = await parseM3U8File(res!);
+  print('seg el path >>> $segmentPath');
 }
 
 Future<List<String>> parseM3U8File(File m3u8File) async {
   List<String> varientPath = [];
+  List<String> segList = [];
   String content = await m3u8File.readAsString();
 
   HlsPlaylistParser parser = HlsPlaylistParser.create();
@@ -29,6 +32,12 @@ Future<List<String>> parseM3U8File(File m3u8File) async {
   if (playlist is HlsMasterPlaylist) {
     for (Variant varient in playlist.variants) {
       varientPath.add(varient.url.toString());
+    }
+  } else if (playlist is HlsMediaPlaylist) {
+    for (Segment segment in playlist.segments) {
+      varientPath
+          .add('https://s3cdn.skiiishow.com/assets/${segment.url.toString()}');
+      print('https://s3cdn.skiiishow.com/assets/${segment.url.toString()}');
     }
   }
   return varientPath;
